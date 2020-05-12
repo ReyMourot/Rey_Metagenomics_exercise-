@@ -1,13 +1,18 @@
 # Rey_Metagenomics_exercise-
-# Creation of a tab-delimited file named "samples.txt" 
+# No demultiplexing, go directly into quality filtering. 
+# Go search the fasta file into the computer (dezip the file manually before):
+cd 00_RAW
+# (all files are together)
+cp /mnt/c/Users/Audrey/Downloads/filename filename.fastq
+# Creation of a tab-delimited file named "samples.txt" (for each sample, change the name of the file ex: sample1.txt, sample2.txt, sample3.txt ... 01_QC, 01_QC2 etc etc)
 # Quality filtering:
 mkdir 01_QC
 iu-gen-configs samples.txt -o 01_QC
 iu-filter-quality-minoche 01_QC/Sample_01.ini
 
 # Co-assembly :
-R1s=`ls 01_QC/*QUALITY_PASSED_R1* | python -c ('import sys; print ",".join([x.strip() for x in sys.stdin.readlines()])')`
-R2s=`ls 01_QC/*QUALITY_PASSED_R2* | python -c ('import sys; print ",".join([x.strip() for x in sys.stdin.readlines()])')`
+R1s=`ls 01_QC/*QUALITY_PASSED_R1* | python -c 'import sys; print (",".join([x.strip() for x in sys.stdin.readlines()]))'`
+R2s=`ls 01_QC/*QUALITY_PASSED_R2* | python -c 'import sys; print (",".join([x.strip() for x in sys.stdin.readlines()]))'`
 megahit -1 $R1s -2 $R2s --min-contig-len 1000 -m 0.85 -o 02_ASSEMBLY/ -t 40
 mkdir 03_CONTIGS
 anvi-script-reformat-fasta 02_ASSEMBLY/final.contigs.fa -o 03_CONTIGS/contigs.fa --min-len 2500 --simplify-names --report name_conversions.txt
@@ -27,5 +32,3 @@ anvi-display-contigs-stats contigs.db
 
 # anvi profile 
 anvi-profile -i 04_MAPPING/Sample_01.bam -c contigs.db
-
-# => and then I'm lost 
