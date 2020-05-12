@@ -29,6 +29,15 @@ rm 04_MAPPING/Sample_01.sam 04_MAPPING/Sample_01-RAW.bam
 anvi-gen-contigs-database -f 03_CONTIGS/contigs.fa -o contigs.db -n 'An example contigs datbase'
 anvi-run-hmms -c contigs.db
 anvi-display-contigs-stats contigs.db
+anvi-run-ncbi-cogs contigs.db -T 4
+
+# Taxonomy (on MobaXterm)
+# Download contigs.db file into MobaXterm
+anvi-get-sequences-for-gene-calls -c contigs.db -o gene_calls.fa
+
 
 # anvi profile 
-anvi-profile -i 04_MAPPING/Sample_01.bam -c contigs.db
+anvi-profile -i 04_MAPPING/Sample_01.bam -c contigs.db --cluster-contigs
+
+# anvi interactive
+anvi-interactive -I 127.0.0.1 -p PROFILE.db -c contigs.db 
